@@ -7,30 +7,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MoneyTracker.Infrastructure.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository(MoneyTrackerDbContext db) : ICategoryRepository
     {
-        private readonly MoneyTrackerDbContext _db;
-        public CategoryRepository(MoneyTrackerDbContext db) => _db = db;
+        private readonly MoneyTrackerDbContext _db = db;
 
-        public async Task AddAsync(BudgetCategory category)
+        public async Task AddAsync(Category category)
         {
-            _db.BudgetCategories.Add(category);
+            _db.Categories.Add(category);
             await _db.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var e = await _db.BudgetCategories.FindAsync(id);
-            if (e != null) { _db.BudgetCategories.Remove(e); await _db.SaveChangesAsync(); }
+            var e = await _db.Categories.FindAsync(id);
+            if (e != null) { _db.Categories.Remove(e); await _db.SaveChangesAsync(); }
         }
 
-        public async Task<BudgetCategory?> GetByIdAsync(Guid id) => await _db.BudgetCategories.FindAsync(id);
+        public async Task<Category?> GetByIdAsync(Guid id) => await _db.Categories.FindAsync(id);
+        public async Task<IEnumerable<Category>> ListAsync() => await _db.Categories.ToListAsync();
 
-        public async Task<IEnumerable<BudgetCategory>> ListAsync() => await _db.BudgetCategories.ToListAsync();
-
-        public async Task UpdateAsync(BudgetCategory category)
+        public async Task UpdateAsync(Category category)
         {
-            _db.BudgetCategories.Update(category);
+            _db.Categories.Update(category);
             await _db.SaveChangesAsync();
         }
     }

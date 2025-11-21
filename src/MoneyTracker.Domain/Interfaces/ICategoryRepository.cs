@@ -7,10 +7,10 @@ namespace MoneyTracker.Domain.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task AddAsync(BudgetCategory category);
-        Task UpdateAsync(BudgetCategory category);
+        Task AddAsync(Category category);
+        Task UpdateAsync(Category category);
         Task DeleteAsync(Guid id);
-        Task<BudgetCategory?> GetByIdAsync(Guid id);
-        Task<IEnumerable<BudgetCategory>> ListAsync();
+        Task<Category?> GetByIdAsync(Guid id);
+        Task<IEnumerable<Category>> ListAsync();
     }
 }

@@ -6,15 +6,14 @@ namespace MoneyTracker.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController(ICategoryService svc) : ControllerBase
     {
-        private readonly ICategoryService _svc;
-        public CategoriesController(ICategoryService svc) => _svc = svc;
+        private readonly ICategoryService _svc = svc;
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CategoryCreateDto dto)
         {
-            var c = await _svc.CreateAsync(dto.Name, dto.MonthlyLimit);
+            var c = await _svc.CreateAsync(dto.Name);
             return CreatedAtAction(nameof(GetById), new { id = c.Id }, c);
         }
 
@@ -34,7 +33,7 @@ namespace MoneyTracker.Api.Controllers
         {
             try
             {
-                await _svc.UpdateAsync(id, dto.Name, dto.MonthlyLimit);
+                await _svc.UpdateAsync(id, dto.Name);
                 return NoContent();
             }
             catch (Exception)
@@ -51,5 +50,5 @@ namespace MoneyTracker.Api.Controllers
         }
     }
 
-    public record CategoryCreateDto(string Name, decimal MonthlyLimit);
+    public record CategoryCreateDto(string Name);
 }

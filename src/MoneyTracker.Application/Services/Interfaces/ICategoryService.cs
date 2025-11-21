@@ -4,10 +4,10 @@ namespace MoneyTracker.Application.Services.Interfaces
 {
   public interface ICategoryService
   {
-    Task<BudgetCategory> CreateAsync(string name, decimal monthlyLimit);
-    Task UpdateAsync(Guid id, string name, decimal monthlyLimit);
+    Task<Category> CreateAsync(string name);
+    Task UpdateAsync(Guid id, string name);
     Task DeleteAsync(Guid id);
-    Task<BudgetCategory?> GetByIdAsync(Guid id);
-    Task<IEnumerable<BudgetCategory>> ListAsync();
+    Task<Category?> GetByIdAsync(Guid id);
+    Task<IEnumerable<Category>> ListAsync();
   }
 }
