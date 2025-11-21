@@ -8,10 +8,9 @@ namespace MoneyTracker.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TransactionsController : ControllerBase
+    public class TransactionsController(ITransactionService svc) : ControllerBase
     {
-        private readonly ITransactionService _svc;
-        public TransactionsController(ITransactionService svc) => _svc = svc;
+        private readonly ITransactionService _svc = svc;
 
         /// <summary>
         /// Create a new transaction.
