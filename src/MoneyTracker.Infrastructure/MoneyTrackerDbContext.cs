@@ -7,7 +7,6 @@ namespace MoneyTracker.Infrastructure
     {
         public DbSet<Transaction> Transactions => Set<Transaction>();
         public DbSet<Category> Categories => Set<Category>();
-        public DbSet<BudgetCategory> BudgetCategories => Set<BudgetCategory>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -16,19 +15,18 @@ namespace MoneyTracker.Infrastructure
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Amount).HasColumnType("numeric(18,2)");
                 b.Property(x => x.Type).IsRequired();
-                b.Property(x => x.CategoryId).HasMaxLength(100);
+                b.Property(x => x.CategoryId).IsRequired();
+
+                b.HasOne(t => t.Category)
+                    .WithMany(c => c.Transactions)
+                    .HasForeignKey(t => t.CategoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Category>(b =>
             {
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            });
-
-            modelBuilder.Entity<BudgetCategory>(b =>
-            {
-                b.HasKey(x => x.Id);
-                b.Property(x => x.MonthlyLimit).HasColumnType("numeric(18,2)");
             });
         }
     }
