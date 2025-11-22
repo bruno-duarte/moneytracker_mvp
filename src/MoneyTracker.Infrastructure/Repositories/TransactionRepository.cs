@@ -1,10 +1,7 @@
 using MoneyTracker.Domain.Entities;
 using MoneyTracker.Domain.Interfaces;
-using MoneyTracker.Domain.Queries;
+using MoneyTracker.Domain.Common;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MoneyTracker.Infrastructure.Repositories
 {
@@ -28,26 +25,19 @@ namespace MoneyTracker.Infrastructure.Repositories
 
         public async Task<Transaction?> GetByIdAsync(Guid id) => await _db.Transactions.FindAsync(id);
 
-        public async Task<IEnumerable<Transaction>> ListAsync(TransactionQuery query)
+        public async Task<PagedResult<Transaction>> ListAsync(ISpecification<Transaction> spec, int pageNumber, int pageSize)
         {
-            var q = _db.Transactions.AsQueryable();
+            var query = _db.Transactions.AsNoTracking().Where(spec.Criteria);
 
-            if (query.Type.HasValue)
-                q = q.Where(t => t.Type == query.Type.Value);
+            var totalCount = await query.CountAsync();
 
-            if (!string.IsNullOrEmpty(query.CategoryId))
-                q = q.Where(t => t.CategoryId == query.CategoryId);
-
-            if (query.From.HasValue)
-                q = q.Where(t => t.Date >= query.From.Value);
-
-            if (query.To.HasValue)
-                q = q.Where(t => t.Date <= query.To.Value);
-
-            return await q
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
+            var items = await query
+                .OrderByDescending(t => t.Date)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedResult<Transaction>(items, pageNumber, pageSize, totalCount);
         }
 
         public async Task<IEnumerable<Transaction>> ListByMonthAsync(int year, int month)

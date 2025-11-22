@@ -1,4 +1,4 @@
-using MoneyTracker.Application.DTOs;
+using MoneyTracker.Application.DTOs.Transactions;
 using MoneyTracker.Domain.Queries;
 
 namespace MoneyTracker.Application.Mappers
@@ -13,7 +13,7 @@ namespace MoneyTracker.Application.Mappers
               CategoryId = dto.CategoryId,
               From = dto.From,
               To = dto.To,
-              Page = dto.Page,
+              PageNumber = dto.PageNumber,
               PageSize = dto.PageSize
           };
       }

@@ -13,7 +13,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": ".NET Launch Web",
+      "name": "Run Api",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",

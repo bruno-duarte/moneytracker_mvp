@@ -10,7 +10,10 @@ using MoneyTracker.Api.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddControllers()
+    .AddControllers(options =>
+    {
+        options.Filters.Add<GlobalExceptionFilter>();
+    })
     .AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ReferenceLoopHandling =
@@ -22,6 +25,7 @@ builder.Services.AddSwaggerGen(c => {
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
+    c.EnableAnnotations();
 });
 
 builder.Services.AddMoneyTrackerDependencies(builder.Configuration);
