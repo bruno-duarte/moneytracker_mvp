@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MoneyTracker.Domain.Entities;
-using MoneyTracker.Domain.Queries;
+using MoneyTracker.Domain.Common;
 
 namespace MoneyTracker.Domain.Interfaces
 {
@@ -12,7 +9,7 @@ namespace MoneyTracker.Domain.Interfaces
         Task UpdateAsync(Transaction transaction);
         Task DeleteAsync(Guid id);
         Task<Transaction?> GetByIdAsync(Guid id);
-        Task<IEnumerable<Transaction>> ListAsync(TransactionQuery query);
+        Task<PagedResult<Transaction>> ListAsync(ISpecification<Transaction> spec, int pageNumber, int pageSize);
         Task<IEnumerable<Transaction>> ListByMonthAsync(int year, int month);
     }
 }
