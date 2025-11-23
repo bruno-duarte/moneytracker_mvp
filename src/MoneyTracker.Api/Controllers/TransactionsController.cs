@@ -6,7 +6,6 @@ using MoneyTracker.Domain.Entities;
 using MoneyTracker.Api.Responses;
 using MoneyTracker.Api.Filters;
 using Swashbuckle.AspNetCore.Annotations;
-using FluentValidation;
 
 namespace MoneyTracker.Api.Controllers
 {
@@ -51,7 +50,7 @@ namespace MoneyTracker.Api.Controllers
         public async Task<IActionResult> Create(TransactionSaveDto dto)
         {
             var t = await svc.CreateAsync(dto.Amount, dto.Type, dto.CategoryId, dto.Date, dto.Description);
-            return CreatedAtAction(nameof(GetById), new { id = t.Id }, t.ToDto());
+            return CreatedAtAction(nameof(GetById), new { id = t.Id }, t);
         }
         
         /// <summary>
@@ -89,7 +88,7 @@ namespace MoneyTracker.Api.Controllers
         {
             var result = await svc.ListAsync(dto);
 
-            var items = result.Items.Select(t => t.ToDto()).ToList();
+            var items = result.Items.ToList();
 
             Response.Headers.Append("X-Pagination-TotalCount", result.TotalCount.ToString());
             Response.Headers.Append("X-Pagination-PageNumber", result.PageNumber.ToString());
@@ -126,7 +125,7 @@ namespace MoneyTracker.Api.Controllers
         {
             var t = await svc.GetByIdAsync(id);
             if (t == null) return NotFound();
-            return Ok(t.ToDto());
+            return Ok(t);
         }
 
         /// <summary>
@@ -159,7 +158,7 @@ namespace MoneyTracker.Api.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] TransactionSaveDto dto)
         {
             var updated = await svc.UpdateAsync(id, dto);
-            return Ok(updated.ToDto());
+            return Ok(updated);
         }
 
         /// <summary>
@@ -192,7 +191,7 @@ namespace MoneyTracker.Api.Controllers
         public async Task<IActionResult> Patch(Guid id, [FromBody] TransactionPatchDto dto)
         {
             var updated = await svc.PatchAsync(id, dto);
-            return Ok(updated.ToDto());
+            return Ok(updated);
         }
 
         /// <summary>

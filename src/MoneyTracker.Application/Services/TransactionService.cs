@@ -20,7 +20,7 @@ namespace MoneyTracker.Application.Services
         private readonly ProducerWrapper _producer = producer;
         private readonly ICategoryRepository _categoryRepo = categoryRepo;
 
-        public async Task<Transaction> CreateAsync(decimal amount, TransactionType type, Guid categoryId, DateTime date, string? desc)
+        public async Task<TransactionDto> CreateAsync(decimal amount, TransactionType type, Guid categoryId, DateTime date, string? desc)
         {
             var category = await _categoryRepo.GetByIdAsync(categoryId);
 
@@ -31,24 +31,27 @@ namespace MoneyTracker.Application.Services
             await _repo.AddAsync(t);
             // publish event
             await _producer.ProduceAsync("transaction.created", t.ToDto());
-            return t;
+            return t.ToDto();
         }
 
         public async Task<bool> DeleteAsync(Guid id) => await _repo.DeleteAsync(id);
 
-        public async Task<Transaction?> GetByIdAsync(Guid id) => await _repo.GetByIdAsync(id);
+        public async Task<TransactionDto?> GetByIdAsync(Guid id)
+        {
+            var t = await _repo.GetByIdAsync(id);
+            return t?.ToDto();
+        }
 
-        public async Task<PagedResult<Transaction>> ListAsync(TransactionQueryDto dto)
+        public async Task<PagedResult<TransactionDto>> ListAsync(TransactionQueryDto dto)
         {
             var query = dto.ToQuery();
             var spec = new TransactionFilterSpecification(query);
-
             var pagedResult = await _repo.ListAsync(spec, query.PageNumber, query.PageSize);
 
-            return new PagedResult<Transaction>(pagedResult.Items, pagedResult.PageNumber, pagedResult.PageSize, pagedResult.TotalCount);
+            return new PagedResult<TransactionDto>(pagedResult.Items.Select(x => x.ToDto()), pagedResult.PageNumber, pagedResult.PageSize, pagedResult.TotalCount);
         }
 
-        public async Task<Transaction> UpdateAsync(Guid id, TransactionSaveDto dto)
+        public async Task<TransactionDto> UpdateAsync(Guid id, TransactionSaveDto dto)
         {
             var t = await _repo.GetByIdAsync(id)
                 ?? throw new EntityNotFoundException("Transaction", id);
@@ -56,10 +59,10 @@ namespace MoneyTracker.Application.Services
             t.Update(dto.Amount, dto.Type, dto.CategoryId, dto.Date, dto.Description);
             await _repo.UpdateAsync(t);
 
-            return t;
+            return t.ToDto();
         }
 
-        public async Task<Transaction> PatchAsync(Guid id, TransactionPatchDto dto)
+        public async Task<TransactionDto> PatchAsync(Guid id, TransactionPatchDto dto)
         {
             var t = await _repo.GetByIdAsync(id)
                 ?? throw new EntityNotFoundException("Transaction", id);
@@ -68,7 +71,7 @@ namespace MoneyTracker.Application.Services
 
             await _repo.UpdateAsync(t);
 
-            return t;
+            return t.ToDto();
         }
     }
 }
