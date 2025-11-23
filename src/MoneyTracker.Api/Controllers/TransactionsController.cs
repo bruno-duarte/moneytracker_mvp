@@ -14,9 +14,10 @@ namespace MoneyTracker.Api.Controllers
     [Route("api/[controller]")]
     [SwaggerTag("API controller for managing transactions.")]
     public class TransactionsController(
-        ITransactionService svc, 
+        ITransactionService svc,
         IValidator<TransactionSaveDto> createValidator,
-        IValidator<TransactionQueryDto> queryValidator) : ControllerBase
+        IValidator<TransactionQueryDto> queryValidator
+    ) : ControllerBase
     {
         private readonly ITransactionService _svc = svc;
         private readonly IValidator<TransactionSaveDto> _createValidator = createValidator;
