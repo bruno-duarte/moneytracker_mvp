@@ -13,11 +13,7 @@ namespace MoneyTracker.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [SwaggerTag("API controller for managing transactions.")]
-    public class TransactionsController(
-        ITransactionService svc,
-        IValidator<TransactionSaveDto> createValidator,
-        IValidator<TransactionQueryDto> queryValidator
-    ) : ControllerBase
+    public class TransactionsController(ITransactionService svc) : ControllerBase
     {
         /// <summary>
         /// Creates a new transaction.
@@ -48,7 +44,7 @@ namespace MoneyTracker.Api.Controllers
         /// Returned when an unexpected server error occurs.
         /// </response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Transaction))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TransactionDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
         [ServiceFilter(typeof(ValidationFilterAttribute<TransactionSaveDto>))]
