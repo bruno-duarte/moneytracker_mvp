@@ -5,11 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MoneyTracker.Infrastructure.Repositories
 {
-    public class TransactionRepository : ITransactionRepository
+    public class TransactionRepository(MoneyTrackerDbContext db) : ITransactionRepository
     {
-        private readonly MoneyTrackerDbContext _db;
-
-        public TransactionRepository(MoneyTrackerDbContext db) => _db = db;
+        private readonly MoneyTrackerDbContext _db = db;
 
         public async Task AddAsync(Transaction transaction)
         {
@@ -38,14 +36,6 @@ namespace MoneyTracker.Infrastructure.Repositories
                 .ToListAsync();
 
             return new PagedResult<Transaction>(items, pageNumber, pageSize, totalCount);
-        }
-
-        public async Task<IEnumerable<Transaction>> ListByMonthAsync(int year, int month)
-        {
-            return await _db.Transactions
-                .AsNoTracking()
-                .ToListAsync()
-                .ContinueWith(t => t.Result.FindAll(x => x.Date.Year == year && x.Date.Month == month));
         }
 
         public async Task UpdateAsync(Transaction transaction)
