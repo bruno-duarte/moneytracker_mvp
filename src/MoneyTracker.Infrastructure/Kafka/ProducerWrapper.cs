@@ -11,7 +11,7 @@ namespace MoneyTracker.Infrastructure.Kafka
         private readonly IProducer<Null, string> _producer;
         private readonly string _topic;
 
-        public ProducerWrapper(Microsoft.Extensions.Configuration.IConfiguration config)
+        public ProducerWrapper(IConfiguration config)
         {
             var servers = config.GetValue<string>("Kafka:BootstrapServers") ?? "localhost:9092";
             _topic = config.GetValue<string>("Kafka:Topic_TransactionCreated") ?? "transaction.created";
