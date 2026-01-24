@@ -1,12 +1,8 @@
-using MoneyTracker.Application.Services.Interfaces;
-using MoneyTracker.Application.Services;
-using MoneyTracker.Application.DTOs.Transactions;
-using MoneyTracker.Application.Validators.Transactions;
+using MoneyTracker.Application;
 using MoneyTracker.Api.Filters;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MoneyTracker.Application.Validators.Categories;
-using MoneyTracker.Application.DTOs.Categories;
 using MoneyTracker.Messaging.Kafka.Configuration;
 using MoneyTracker.Messaging.Abstractions;
 using MoneyTracker.Messaging.Kafka.Internal.Producer;
@@ -21,34 +17,24 @@ namespace MoneyTracker.Api.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            // Infrastructure
             services.AddInfrastructure(configuration);
-            
-            // Application services
-            services.AddScoped<ITransactionService, TransactionService>();
-            services.AddScoped<ICategoryService, CategoryService>();
+
+            // Application
+            services.AddApplication(configuration);
 
             // Kafka 
             services.AddSingleton<IMessageSerializer, JsonMessageSerializer>();
             services.Configure<KafkaConnectionOptions>(
-            configuration.GetSection("Kafka:Connection"));
+                configuration.GetSection("Kafka:Connection"));
             services.AddSingleton<IMessageProducer, KafkaProducer>();
 
             // FluentValidation
             services.AddValidatorsFromAssemblyContaining<CategorySaveDtoValidator>();
-            services.AddValidatorsFromAssemblyContaining<CategoryQueryDtoValidator>();
-            services.AddValidatorsFromAssemblyContaining<CategoryPatchDtoValidator>();
-            services.AddValidatorsFromAssemblyContaining<TransactionSaveDtoValidator>();
-            services.AddValidatorsFromAssemblyContaining<TransactionQueryDtoValidator>();
-            services.AddValidatorsFromAssemblyContaining<TransactionPatchDtoValidator>();
             services.AddFluentValidationClientsideAdapters();
 
             // Filters
-            services.AddScoped<ValidationFilterAttribute<CategorySaveDto>>();
-            services.AddScoped<ValidationFilterAttribute<CategoryQueryDto>>();
-            services.AddScoped<ValidationFilterAttribute<CategoryPatchDto>>();
-            services.AddScoped<ValidationFilterAttribute<TransactionSaveDto>>();
-            services.AddScoped<ValidationFilterAttribute<TransactionQueryDto>>();
-            services.AddScoped<ValidationFilterAttribute<TransactionPatchDto>>();
+            services.AddScoped(typeof(ValidationFilterAttribute<>));
 
             return services;
         }

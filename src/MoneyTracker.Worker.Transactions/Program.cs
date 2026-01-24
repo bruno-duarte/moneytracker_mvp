@@ -1,7 +1,6 @@
+using MoneyTracker.Application;
 using MoneyTracker.Application.Messaging.Handlers;
 using MoneyTracker.Application.Messaging.Topics;
-using MoneyTracker.Application.Services;
-using MoneyTracker.Application.Services.Interfaces;
 using MoneyTracker.Domain.Events;
 using MoneyTracker.Infrastructure;
 using MoneyTracker.Messaging.Kafka.Configuration;
@@ -13,7 +12,7 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Application
-builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddApplication(builder.Configuration);
 
 // Kafka
 builder.Services.AddKafkaMessaging(options =>
