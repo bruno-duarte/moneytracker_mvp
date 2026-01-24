@@ -3,10 +3,12 @@ using MoneyTracker.Domain.Interfaces;
 using MoneyTracker.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using MoneyTracker.Domain.Interfaces.Repositories;
+using MoneyTracker.Infrastructure.Persistence.Common;
+using MoneyTracker.Infrastructure.Repositories.Common;
 
-namespace MoneyTracker.Infrastructure.Repositories
+namespace MoneyTracker.Infrastructure.Repositories.EfCore
 {
-    public class TransactionRepository(MoneyTrackerDbContext db) : BaseRepository<Transaction>(db), ITransactionRepository
+    public class TransactionRepository(IMoneyTrackerDbContext db) : BaseRepository<Transaction>(db), ITransactionRepository
     {
         public async Task<PagedResult<Transaction>> ListAsync(ISpecification<Transaction> spec, int pageNumber, int pageSize)
         {

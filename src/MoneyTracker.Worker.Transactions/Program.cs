@@ -1,27 +1,16 @@
-using Microsoft.EntityFrameworkCore;
 using MoneyTracker.Application.Messaging.Handlers;
 using MoneyTracker.Application.Messaging.Topics;
 using MoneyTracker.Application.Services;
 using MoneyTracker.Application.Services.Interfaces;
 using MoneyTracker.Domain.Events;
-using MoneyTracker.Domain.Interfaces.Repositories;
 using MoneyTracker.Infrastructure;
-using MoneyTracker.Infrastructure.Repositories;
 using MoneyTracker.Messaging.Kafka.Configuration;
 using MoneyTracker.Messaging.Kafka.Extensions;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-// DbContext
-builder.Services.AddDbContext<MoneyTrackerDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"))
-);
-
-// Repositories
-builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+// Infrastructure
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Application
 builder.Services.AddScoped<ITransactionService, TransactionService>();

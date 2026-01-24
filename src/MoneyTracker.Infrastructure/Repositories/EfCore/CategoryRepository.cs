@@ -3,10 +3,12 @@ using MoneyTracker.Domain.Common;
 using MoneyTracker.Domain.Entities;
 using MoneyTracker.Domain.Interfaces;
 using MoneyTracker.Domain.Interfaces.Repositories;
+using MoneyTracker.Infrastructure.Persistence.Common;
+using MoneyTracker.Infrastructure.Repositories.Common;
 
-namespace MoneyTracker.Infrastructure.Repositories
+namespace MoneyTracker.Infrastructure.Repositories.EfCore
 {
-    public class CategoryRepository(MoneyTrackerDbContext db) : BaseRepository<Category>(db), ICategoryRepository
+    public class CategoryRepository(IMoneyTrackerDbContext db) : BaseRepository<Category>(db), ICategoryRepository
     {
         public async Task<Category?> GetByNameAsync(string name)
         {

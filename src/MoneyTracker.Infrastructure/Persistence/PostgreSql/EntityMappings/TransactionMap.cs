@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MoneyTracker.Domain.Entities;
 
-namespace MoneyTracker.Infrastructure.EntityMappings
+namespace MoneyTracker.Infrastructure.Persistence.PostgreSql.EntityMappings
 {
     public class TransactionMap : IEntityTypeConfiguration<Transaction>
     {

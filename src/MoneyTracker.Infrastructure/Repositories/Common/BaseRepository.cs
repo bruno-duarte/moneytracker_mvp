@@ -1,30 +1,31 @@
 using Microsoft.EntityFrameworkCore;
 using MoneyTracker.Domain.Interfaces.Repositories;
+using MoneyTracker.Infrastructure.Persistence.Common;
 using System.Linq.Expressions;
 
-namespace MoneyTracker.Infrastructure.Repositories
+namespace MoneyTracker.Infrastructure.Repositories.Common
 {
     public class BaseRepository<T> : IRepository<T> where T : class
     {
-        protected readonly MoneyTrackerDbContext _db;
+        protected readonly IMoneyTrackerDbContext _context;
         protected readonly DbSet<T> _set;
 
-        public BaseRepository(MoneyTrackerDbContext db)
+        public BaseRepository(IMoneyTrackerDbContext context)
         {
-            _db = db;
-            _set = _db.Set<T>();
+            _context = context;
+            _set = _context.Set<T>();
         }
 
         public virtual async Task AddAsync(T entity)
         {
             await _set.AddAsync(entity);
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
             _set.Update(entity);
-            await _db.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public virtual async Task<bool> DeleteAsync(Guid id)
@@ -33,7 +34,7 @@ namespace MoneyTracker.Infrastructure.Repositories
             if (entity != null)
             {
                 _set.Remove(entity);
-                await _db.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;

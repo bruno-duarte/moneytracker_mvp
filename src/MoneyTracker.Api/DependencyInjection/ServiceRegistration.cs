@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using MoneyTracker.Domain.Interfaces.Repositories;
-using MoneyTracker.Infrastructure;
-using MoneyTracker.Infrastructure.Repositories;
 using MoneyTracker.Application.Services.Interfaces;
 using MoneyTracker.Application.Services;
 using MoneyTracker.Application.DTOs.Transactions;
@@ -15,6 +11,7 @@ using MoneyTracker.Messaging.Kafka.Configuration;
 using MoneyTracker.Messaging.Abstractions;
 using MoneyTracker.Messaging.Kafka.Internal.Producer;
 using MoneyTracker.Messaging.Abstractions.Internal.Serialization;
+using MoneyTracker.Infrastructure;
 
 namespace MoneyTracker.Api.DependencyInjection
 {
@@ -24,16 +21,8 @@ namespace MoneyTracker.Api.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // DbContext
-            services.AddDbContext<MoneyTrackerDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-            );
-
-            // Repositories
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<ITransactionRepository, TransactionRepository>();
-
+            services.AddInfrastructure(configuration);
+            
             // Application services
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICategoryService, CategoryService>();
@@ -42,9 +31,6 @@ namespace MoneyTracker.Api.DependencyInjection
             services.AddSingleton<IMessageSerializer, JsonMessageSerializer>();
             services.Configure<KafkaConnectionOptions>(
             configuration.GetSection("Kafka:Connection"));
-
-            services.AddSingleton<IMessageProducer, KafkaProducer>();
-
             services.AddSingleton<IMessageProducer, KafkaProducer>();
 
             // FluentValidation
