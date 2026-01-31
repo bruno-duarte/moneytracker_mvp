@@ -56,6 +56,5 @@ namespace MoneyTracker.Application.Services
 
             return c.ToDto();
         }
-
     }
 }

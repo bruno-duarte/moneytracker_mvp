@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MoneyTracker.Domain.Entities;
+using MoneyTracker.Infrastructure.Persistence.Converters;
 
 namespace MoneyTracker.Infrastructure.Persistence.PostgreSql.EntityMappings
 {
@@ -9,7 +10,9 @@ namespace MoneyTracker.Infrastructure.Persistence.PostgreSql.EntityMappings
         public void Configure(EntityTypeBuilder<Transaction> b)
         {
             b.HasKey(x => x.Id);
-            b.Property(x => x.Amount).HasColumnType("numeric(18,2)");
+            b.Property(x => x.Amount).HasConversion(new MoneyConverter())
+                .HasColumnType("numeric(18,2)")
+                .IsRequired();
             b.Property(x => x.Type).IsRequired();
             b.Property(x => x.CategoryId).IsRequired();
 

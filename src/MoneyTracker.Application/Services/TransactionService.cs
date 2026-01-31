@@ -11,7 +11,6 @@ using MoneyTracker.Messaging.Abstractions;
 using MoneyTracker.Messaging.Abstractions.Models;
 using MoneyTracker.Application.Messaging.Topics;
 using MoneyTracker.Domain.Events;
-using System.Text.Json;
 
 namespace MoneyTracker.Application.Services
 {
@@ -25,7 +24,7 @@ namespace MoneyTracker.Application.Services
             var category = await categoryRepo.GetByIdAsync(categoryId) 
                 ?? throw new InvalidReferenceException("Category", categoryId);
 
-            var t = new Transaction(Guid.NewGuid(), amount, type, categoryId, date, desc);
+            var t = Transaction.Create(Guid.NewGuid(), amount, type, categoryId, date, desc);
             await repo.AddAsync(t);
             // publish event
             await producer.PublishAsync(

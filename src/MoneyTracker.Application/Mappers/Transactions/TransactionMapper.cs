@@ -1,6 +1,7 @@
 using MoneyTracker.Application.DTOs.Transactions;
 using MoneyTracker.Domain.Entities;
 using MoneyTracker.Domain.Events;
+using MoneyTracker.Domain.ValueObjects;
 
 namespace MoneyTracker.Application.Mappers
 {
@@ -11,7 +12,7 @@ namespace MoneyTracker.Application.Mappers
         return new TransactionDto
         {
             Id = t.Id,
-            Amount = t.Amount,
+            Amount = Money.Create(t.Amount.Value).Value,
             Type = t.Type,
             CategoryId = t.CategoryId,
             Date = t.Date,
@@ -24,7 +25,7 @@ namespace MoneyTracker.Application.Mappers
         return new TransactionCreatedEvent
         {
           TransactionId = t.Id,
-          Amount = t.Amount,
+          Amount = Money.Create(t.Amount.Value).Value,
           Type = t.Type.ToString(),
           CategoryId = t.CategoryId,
           CreatedAt = DateTime.UtcNow
