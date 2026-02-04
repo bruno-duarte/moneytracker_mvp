@@ -14,6 +14,7 @@ namespace MoneyTracker.Tests.Application.Services
   {
     private readonly Mock<ITransactionRepository> _repoMock;
     private readonly Mock<ICategoryRepository> _categoryRepoMock;
+    private readonly Mock<IPersonRepository> _personRepoMock;
     private readonly Mock<IMessageProducer> _messageProducerMock;
     private readonly TransactionService _service;
 
@@ -21,9 +22,10 @@ namespace MoneyTracker.Tests.Application.Services
     {
       _repoMock = new Mock<ITransactionRepository>();
       _categoryRepoMock = new Mock<ICategoryRepository>();
+      _personRepoMock = new Mock<IPersonRepository>();
       _messageProducerMock = new Mock<IMessageProducer>();
 
-      _service = new TransactionService(_repoMock.Object, _categoryRepoMock.Object, _messageProducerMock.Object);
+      _service = new TransactionService(_repoMock.Object, _categoryRepoMock.Object, _personRepoMock.Object, _messageProducerMock.Object);
     }
 
     [Fact]

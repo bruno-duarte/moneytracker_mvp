@@ -8,8 +8,13 @@ namespace MoneyTracker.Domain.Entities
         public Guid Id { get; private set; }
         public Money Amount { get; private set; }
         public TransactionType Type { get; private set; }
+
         public Guid CategoryId { get; private set; }
-        public Category? Category { get; private set; }
+        public Category Category { get; private set; }
+
+        public Guid PersonId { get; private set; }
+        public Person Person { get; private set; }
+
         public DateTime Date { get; private set; }
         public string? Description { get; private set; }
 
@@ -21,40 +26,35 @@ namespace MoneyTracker.Domain.Entities
             Guid id,
             Money amount,
             TransactionType type,
-            Guid categoryId,
+            Category category,
+            Person person,
             DateTime date,
             string? description)
         {
+            ValidateBusinessRules(type, category, person);
+
             Id = id;
             Amount = amount;
             Type = type;
-            CategoryId = categoryId;
+            CategoryId = category.Id;
+            Category = category;
+            PersonId = person.Id;
+            Person = person;
             Date = date;
             Description = description;
         }
 
         public static Transaction Create(
-            Guid id,
             decimal amount,
             TransactionType type,
-            Guid categoryId,
+            Category category,
+            Person person,
             DateTime date,
             string? description)
         {
-            if (categoryId == Guid.Empty)
-                throw new Exception("CategoryId não pode ser vazio.");
-
             var money = Money.Create(amount);
-            var novoId = id == Guid.Empty ? Guid.NewGuid() : id;
-
-            return new Transaction(
-                novoId,
-                money,
-                type,
-                categoryId,
-                date,
-                description?.Trim()
-            );
+            
+            return new Transaction(Guid.NewGuid(), money, type, category, person, date, description?.Trim());
         }
 
         public void Update(
@@ -100,6 +100,18 @@ namespace MoneyTracker.Domain.Entities
 
             if (description != null)
                 Description = description.Trim();
+        }
+
+        private static void ValidateBusinessRules(TransactionType type, Category category, Person person)
+        {
+            if (person.Age < 18 && type == TransactionType.Income)
+                throw new Exception("Minors cannot register income.");
+
+            if (category.Type == CategoryType.Expense && type == TransactionType.Income)
+                throw new Exception("Category not allowed for income.");
+
+            if (category.Type == CategoryType.Income && type == TransactionType.Expense)
+                throw new Exception("Category not allowed for expense.");
         }
     }
 }

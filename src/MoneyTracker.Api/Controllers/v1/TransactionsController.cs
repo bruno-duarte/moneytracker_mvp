@@ -57,7 +57,7 @@ namespace MoneyTracker.Api.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute<TransactionSaveDto>))]
         public async Task<IActionResult> Create(TransactionSaveDto dto)
         {
-            var t = await svc.CreateAsync(dto.Amount, dto.Type, dto.CategoryId, dto.Date, dto.Description);
+            var t = await svc.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = t.Id }, t);
         }
         

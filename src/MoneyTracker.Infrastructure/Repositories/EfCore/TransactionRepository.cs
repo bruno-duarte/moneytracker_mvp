@@ -24,5 +24,11 @@ namespace MoneyTracker.Infrastructure.Repositories.EfCore
 
             return new PagedResult<Transaction>(items, pageNumber, pageSize, totalCount);
         }
+
+        public async Task<IQueryable<IGrouping<PersonGroup, Transaction>>> GetTotalsByPersonAsync()
+        {
+            return await Task.FromResult(_set.AsNoTracking()
+                .GroupBy(t => new PersonGroup(t.PersonId, t.Person.Name)));
+        }
     }
 }

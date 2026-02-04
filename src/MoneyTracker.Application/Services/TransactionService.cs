@@ -11,30 +11,37 @@ using MoneyTracker.Messaging.Abstractions;
 using MoneyTracker.Messaging.Abstractions.Models;
 using MoneyTracker.Application.Messaging.Topics;
 using MoneyTracker.Domain.Events;
+using MoneyTracker.Application.DTOs.Reports;
 
 namespace MoneyTracker.Application.Services
 {
     public class TransactionService(
         ITransactionRepository repo, 
         ICategoryRepository categoryRepo, 
+        IPersonRepository personRepo,
         IMessageProducer producer) : ITransactionService
     {
-        public async Task<TransactionDto> CreateAsync(decimal amount, TransactionType type, Guid categoryId, DateTime date, string? desc)
+        public async Task<TransactionDto> CreateAsync(TransactionSaveDto dto)
         {
-            var category = await categoryRepo.GetByIdAsync(categoryId) 
-                ?? throw new InvalidReferenceException("Category", categoryId);
+            var category = await categoryRepo.GetByIdAsync(dto.CategoryId)
+                ?? throw new InvalidReferenceException("Category", dto.CategoryId);
 
-            var t = Transaction.Create(Guid.NewGuid(), amount, type, categoryId, date, desc);
+            var person = await personRepo.GetByIdAsync(dto.PersonId)
+                ?? throw new InvalidReferenceException("Person", dto.PersonId);
+
+            var t = Transaction.Create(dto.Amount, dto.Type, category, person, dto.Date, dto.Description);
+
             await repo.AddAsync(t);
-            // publish event
+
             await producer.PublishAsync(
-                TransactionTopics.Created, 
+                TransactionTopics.Created,
                 new MessageEnvelope
                 {
                     MessageType = nameof(TransactionCreatedEvent),
                     OccurredAt = DateTime.UtcNow,
                     Payload = t.ToEvent(),
                 });
+
             return t.ToDto();
         }
 
@@ -83,5 +90,20 @@ namespace MoneyTracker.Application.Services
             // implement event processing logic here
 			return Task.CompletedTask;
 		}
+
+        public async Task<List<PersonSummaryDto>> GetTotalsByPersonAsync()
+        {
+            var groups = await repo.GetTotalsByPersonAsync();
+            return [.. groups
+                .Select(g => new PersonSummaryDto
+                {
+                    PersonId = g.Key.PersonId,
+                    Name = g.Key.Name,
+                    TotalIncome = g.Where(t => t.Type == TransactionType.Income)
+                                .Sum(t => t.Amount.Value),
+                    TotalExpense = g.Where(t => t.Type == TransactionType.Expense)
+                                    .Sum(t => t.Amount.Value)
+                })];
+        }
 	}
 }

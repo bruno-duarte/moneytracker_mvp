@@ -10,5 +10,6 @@ namespace MoneyTracker.Domain.Interfaces.Repositories
         Task<bool> DeleteAsync(Guid id);
         Task<Transaction?> GetByIdAsync(Guid id);
         Task<PagedResult<Transaction>> ListAsync(ISpecification<Transaction> spec, int pageNumber, int pageSize);
+        Task<IQueryable<IGrouping<PersonGroup, Transaction>>> GetTotalsByPersonAsync();
     }
 }
