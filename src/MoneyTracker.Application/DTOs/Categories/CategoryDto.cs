@@ -1,3 +1,5 @@
+using MoneyTracker.Domain.Enums;
+
 namespace MoneyTracker.Application.DTOs.Categories
 {
     /// <summary>
@@ -14,5 +16,10 @@ namespace MoneyTracker.Application.DTOs.Categories
         /// Name of the category.
         /// </summary>
         public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Type of the category (Expense, Income, Both).
+        /// </summary>
+        public CategoryType Type { get; set; }
     }
 }

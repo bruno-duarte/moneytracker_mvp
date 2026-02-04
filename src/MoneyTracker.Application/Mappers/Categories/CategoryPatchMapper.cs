@@ -7,7 +7,7 @@ namespace MoneyTracker.Application.Mappers
     {
         public static void MapChanges(this CategoryPatchDto dto, Category c)
         {
-            c.Patch(dto.Name);
+            c.Patch(dto.Name, dto.Type);
         }
     }
 }

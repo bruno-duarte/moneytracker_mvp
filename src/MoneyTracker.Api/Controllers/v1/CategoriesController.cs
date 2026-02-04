@@ -41,7 +41,7 @@ namespace MoneyTracker.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] CategorySaveDto dto)
         {
-            var c = await svc.CreateAsync(dto.Name);
+            var c = await svc.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = c.Id }, c);
         }
 
@@ -146,7 +146,7 @@ namespace MoneyTracker.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(Guid id, [FromBody] CategorySaveDto dto)
         {
-            var updated = await svc.UpdateAsync(id, dto.Name);
+            var updated = await svc.UpdateAsync(id, dto);
             return Ok(updated);
         }
 

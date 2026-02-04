@@ -1,3 +1,5 @@
+using MoneyTracker.Domain.Enums;
+
 namespace MoneyTracker.Application.DTOs.Categories
 {
     /// <summary>
@@ -11,5 +13,10 @@ namespace MoneyTracker.Application.DTOs.Categories
         /// If <c>null</c>, the current name will remain unchanged.
         /// </summary>
         public string? Name { get; set; }
+        /// <summary>
+        /// New category type.  
+        /// If <c>null</c>, the current type will remain unchanged.
+        /// </summary>
+        public CategoryType? Type { get; set; }
     }
 }

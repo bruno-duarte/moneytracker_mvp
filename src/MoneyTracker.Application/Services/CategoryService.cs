@@ -12,9 +12,9 @@ namespace MoneyTracker.Application.Services
     {
         private readonly ICategoryRepository _repo = repo;
 
-        public async Task<CategoryDto> CreateAsync(string name)
+        public async Task<CategoryDto> CreateAsync(CategorySaveDto dto)
         {
-            var c = new Category(Guid.NewGuid(), name);
+            var c = new Category(Guid.NewGuid(), dto.Name, dto.Type);
             await _repo.AddAsync(c);
             return c.ToDto();
         }
@@ -36,10 +36,10 @@ namespace MoneyTracker.Application.Services
             return new PagedResult<CategoryDto>(pagedResult.Items.Select(x => x.ToDto()), pagedResult.PageNumber, pagedResult.PageSize, pagedResult.TotalCount);
         }
 
-        public async Task<CategoryDto> UpdateAsync(Guid id, string name)
+        public async Task<CategoryDto> UpdateAsync(Guid id, CategorySaveDto dto)
         {
             var c = await _repo.GetByIdAsync(id) ?? throw new Exception("Not found");
-            c.Update(name);
+            c.Update(dto.Name, dto.Type);
             await _repo.UpdateAsync(c);
 
             return c.ToDto();
